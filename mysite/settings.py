@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cards',
     'social_django',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
