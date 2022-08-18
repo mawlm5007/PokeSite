@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 #imported models 
-from .models import Set
+from .models import Set, Card
 
 # Create your views here.
 def index(request):
@@ -26,6 +26,8 @@ def logout(request):
     return_to = 'http://127.0.0.1:8000'
     return redirect(f'https://{domain}/v2/logout?client_id={client_id}&returnTo={return_to}')
 
+
+# rest functions 
 def make_request(self, url, method="get", data=None, params=None):
     #LOGGER = logging.getLogger(__name__)
     #if type(data) == dict:
@@ -45,3 +47,18 @@ def get_set(self):
 @api_view(['GET'])
 def get_card(self):
     return make_request(self, "cards?q=id:swsh1-1", method='get')
+
+# create objects 
+def create_set(request):
+    set_instance = Set()
+    #set_instance.set_id = 'yay'
+    #set_instance.totalCardOwned = 0
+    #set_instance.totalCardSet = 0
+    #set_instance.user_id = request.user
+    set_instance.save()
+    return render(request, 'cards/index.html')
+
+def create_card(request):
+    card_instance = Card()
+    card_instance.save()
+    return render(request, 'cards/index.html')
