@@ -3,10 +3,10 @@ from django.contrib.auth import logout as django_logout
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-import logging
 import requests
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+import json
 
 #imported models 
 from .models import Set, Card
@@ -37,28 +37,44 @@ def make_request(self, url, method="get", data=None, params=None):
     if method == "get":
         tcg_response = requests.get("https://api.pokemontcg.io/v2/"+url)
 
+    #print(type(tcg_response))
     content = tcg_response.content.decode() if tcg_response.content else None
-    return Response(content, status=tcg_response.status_code)
+    return HttpResponse(content, content_type='application/json')
 
 @api_view(['GET'])
-def get_set(self):
-    return make_request(self, "sets/swsh1", method="get")
+def get_set(self, id_set = "swsh1"):
+    return make_request(self, "sets/"+id_set, method="get")
 
 @api_view(['GET'])
-def get_card(self):
-    return make_request(self, "cards?q=id:swsh1-1", method='get')
+def get_card(self, id_card = "swsh1-1"):
+    return make_request(self, "cards?q=id:"+id_card, method='get')
+
+# return https response 
+#def get(self, request):
+ #   id_card = "swsh1"
+ #   response = get_set(id_card)
+ #   return HttpResponse(response.data, content_type='application/json')
 
 # create objects 
-def create_set(request):
+def create_set(self, id_set = "swsh1"):
     set_instance = Set()
-    #set_instance.set_id = 'yay'
+    set_instance.set_id = id_set
+
+    set_response = get_set(self, id_set)
+    
+    decoded_set_response = set_response.content
+    json_response = json.loads(decoded_set_response)
+    
+    set_instance.totalCardSet = json_response['data']['total']
     #set_instance.totalCardOwned = 0
-    #set_instance.totalCardSet = 0
     #set_instance.user_id = request.user
     set_instance.save()
-    return render(request, 'cards/index.html')
+    return render(self, 'cards/index.html')
 
-def create_card(request):
+def create_card(request, id_card = 'swsh1-1'):
     card_instance = Card()
+    card_instance.card_id = id_card
     card_instance.save()
     return render(request, 'cards/index.html')
+
+
