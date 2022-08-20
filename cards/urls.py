@@ -9,4 +9,5 @@ urlpatterns = [
     path('getCard/', views.get_card, name='getCard'),
     path('createSet/', views.create_set, name='createSet'),
     path('createCard/', views.create_card, name='createCard'),
+    path('populateSet/', views.populate_set, name='populateSet'),
 ]
