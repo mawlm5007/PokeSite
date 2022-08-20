@@ -19,6 +19,8 @@ class Set(models.Model):
     totalCardSet = models.IntegerField(default=0)
     # total cards the user owns in this set 
     totalCardOwned = models.IntegerField(default=0)
+    # image of the set logo 
+    set_logo = models.CharField(max_length=280, default="logo")
     # id of the user that this information relates to 
     user_id = models.ManyToManyField(to=settings.AUTH_USER_MODEL)
 
@@ -34,6 +36,12 @@ class Card(models.Model):
     own = models.BooleanField(default=False)
     # the set that this card is apart of 
     set_id = models.ManyToManyField(to=Set)
+    # name of the card
+    card_name = models.CharField(max_length=280, default="card")
+    # small image of the card
+    small_image = models.CharField(max_length=280, default="small")
+    # big image of the card
+    big_image = models.CharField(max_length=280, default="big")
 
     def __str__(self):
         return self.card_id
