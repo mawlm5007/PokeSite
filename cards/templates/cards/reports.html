@@ -5,7 +5,9 @@
     <ul>
 {% for cards in card_list %}
     <li>{{ cards.card_name }}</li>
-    <li>{{ cards.small_image }}</li>
+    <img src={{cards.small_image}}
+    alt="new"
+    />
 {% endfor %}
     </ul>
 {% endblock %}
