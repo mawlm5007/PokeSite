@@ -140,3 +140,7 @@ def populate_set(self, id_set = 'swsh9'):
 
     return render(self, 'cards/index.html')
     
+def all_cards(request):
+    card_list = Card.objects.all()
+    return render(request, 'cards/reports.html', 
+    {'card_list': card_list})
