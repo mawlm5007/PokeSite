@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'cards',
     'social_django',
     'rest_framework',
+    'frontend', # enable the frontend app
 ]
 
 MIDDLEWARE = [

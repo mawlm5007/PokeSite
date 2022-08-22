@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('cards.urls')),
     path('', include('social_django.urls')),
+    path('', include('frontend.urls'))
 ]
