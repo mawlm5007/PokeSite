@@ -4,9 +4,11 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import requests
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import json
+from .serializers import CardSeralizer, SetSerializer
 
 #imported models 
 from .models import Set, Card, User
@@ -26,6 +28,15 @@ def logout(request):
     return_to = 'http://127.0.0.1:8000'
     return redirect(f'https://{domain}/v2/logout?client_id={client_id}&returnTo={return_to}')
 
+
+# get request for django database
+class CardCreate(generics.ListCreateAPIView):
+    queryset = Card.objects.all()
+    serializer_class = CardSeralizer
+
+class SetCreate(generics.ListCreateAPIView):
+    queryset = Set.objects.all()
+    serializer_class = SetSerializer
 
 # rest class
 class TCG_API():
