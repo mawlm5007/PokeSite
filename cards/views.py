@@ -4,9 +4,11 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import requests
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import json
+from .serializers import CardSeralizer, SetSerializer
 
 #imported models 
 from .models import Set, Card, User
@@ -27,6 +29,15 @@ def logout(request):
     return redirect(f'https://{domain}/v2/logout?client_id={client_id}&returnTo={return_to}')
 
 
+# get request for django database
+class CardCreate(generics.ListCreateAPIView):
+    queryset = Card.objects.all()
+    serializer_class = CardSeralizer
+
+class SetCreate(generics.ListCreateAPIView):
+    queryset = Set.objects.all()
+    serializer_class = SetSerializer
+
 # rest class
 class TCG_API():
     __instance = None 
@@ -46,7 +57,6 @@ class TCG_API():
         else:
             TCG_API.__instance = self
 
-# def get_user(request)
 
 
 
@@ -95,10 +105,10 @@ def create_set(self, id_set = "swsh2"):
 
     set_instance.user_id.add(self.user)
     #set_instance.user_id = self.user.id
+    return set_instance
+    #return render(self, 'cards/index.html')
 
-    return render(self, 'cards/index.html')
-
-def create_card(request, id_card = 'swsh1-1', set = Set()):
+def create_card(request, id_card = 'swsh1-220', set = Set()):
     card_instance = Card()
     card_instance.card_id = id_card
     
@@ -106,6 +116,10 @@ def create_card(request, id_card = 'swsh1-1', set = Set()):
 
     decoded_card_response = card_response.content
     json_response = json.loads(decoded_card_response)
+
+    # check to see if the card exists 
+    if not json_response['data']:
+        return 0
 
     card_instance.card_name = json_response['data'][0]['name']
 
@@ -115,12 +129,29 @@ def create_card(request, id_card = 'swsh1-1', set = Set()):
 
     card_instance.save()
 
-    #card_instance.set_id.add(set)
+    card_instance.set_id.add(set)
 
-
-    return render(request, 'cards/index.html')
+    return card_instance
+    #return render(request, 'cards/index.html')
 
 
 # function to add all cards in a set for a user 
-# def populate_set(self):
+def populate_set(self, id_set = 'swsh9'):
     
+    # we create the set instance 
+    set_instance = create_set(self, id_set)
+    
+    # loop create_card while card_number <= set_instance.totalCardSet
+    card_number = 1
+    while (card_number <= set_instance.totalCardSet):
+        id_card = set_instance.set_id + "-" + str(card_number)
+        
+        create_card(self, id_card, set_instance)
+        card_number = card_number + 1
+
+    return render(self, 'cards/index.html')
+    
+def all_cards(request):
+    card_list = Card.objects.all()
+    return render(request, 'cards/reports.html', 
+    {'card_list': card_list})

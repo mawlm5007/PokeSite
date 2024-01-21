@@ -1,4 +1,13 @@
 {% extends 'cards/base.html' %}
-{% block main_title %}Reported Posts{% endblock %}
+{% block main_title %}Cards in Set{% endblock %}
 {% block content %}
+    <h1>All Cards<h1>
+    <ul>
+{% for cards in card_list %}
+    <li>{{ cards.card_name }}</li>
+    <img src={{cards.small_image}}
+    alt="new"
+    />
+{% endfor %}
+    </ul>
 {% endblock %}
